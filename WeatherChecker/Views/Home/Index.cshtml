@@ -1,0 +1,207 @@
+﻿@model WeatherChecker.Models.Realtime
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#flexSwitchCheckMeasure').change(function () {
+            if ($(this).is(':checked')) {
+                $('#windSpeed').text('@Model.current.wind_mph mph');
+                $('#windGust').text('@Model.current.gust_mph mph');
+                $('#pressure').text('@Model.current.pressure_in in');
+                $('#precip').text('@Model.current.precip_in in');
+            } else {
+                $('#windSpeed').text('@Model.current.wind_kph kph');
+                $('#windGust').text('@Model.current.gust_kph kph');
+                $('#pressure').text('@Model.current.pressure_mb mb');
+                $('#precip').text('@Model.current.precip_mm mm');
+            }
+        });
+        $('#flexSwitchTemp').change(function () {
+            if ($(this).is(':checked')) {
+                $('#tempC').text('@Model.current.temp_f ºF');
+            } else {
+                $('#tempC').text('@Model.current.temp_c ºC')
+            }
+        });
+    });
+</script>
+
+@using (Html.BeginForm("index", "Home", FormMethod.Post))
+{
+
+<!-- Settings -->
+<div class="container" style="text-align: center; margin-top: 20px; border: 1px solid gray; border-radius: 20px; color: blue; ancho">
+    <div class="row" style="align-content: center">
+        <h4 style="text-align: center;">
+            Settings
+        </h4>
+    </div>
+    <!-- Settings headers -->
+    <div class="row">
+        <label class="col">Measurements</label>
+        <label class="col">Temperature</label>
+        <label class="col">Location</label>
+        <label class="col"></label>
+    </div>
+
+        <div class="row">
+            <div class="col">
+                <label style="vertical-align: middle">Metric    </label>
+                <div class="form-check form-switch d-inline-block" style="vertical-align: middle">
+
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckMeasure">
+
+                </div>
+                <label style="vertical-align: middle">Imperial</label>
+            </div>
+            <div class="col-3">
+                <label style="vertical-align: middle">ºC    </label>
+                <div class="form-check form-switch d-inline-block" style="vertical-align: middle">
+
+                    <input class="form-check-input" type="checkbox" id="flexSwitchTemp">
+
+                </div>
+                <label style="vertical-align: middle">ºF</label>
+            </div>
+            
+                <div class="col-3">
+                    <div class="form-group">
+                        <input name="searchString" id="searchString" placeholder="City/Town" />
+                    </div>
+                </div>
+        
+                <div class="col-3">
+                    <input class="btn btn-primary" type="submit" value="Refresh" />
+                </div>
+        
+        </div>
+
+    <div class="spinner-border" role="status" style="color: black; visibility: hidden">
+        <span class="sr-only"></span>
+    </div>
+</div>
+
+<div class="container" style="width: 100%">
+    <div class="row">
+        <div class="col-xs-1 col-sm-1" style="text-align: center">
+            @if (Model.current.is_day > 0)
+            {
+                <img src="//cdn.weatherapi.com/weather/64x64/day/113.png">
+            }
+            else
+            {
+
+                <img src="//cdn.weatherapi.com/weather/64x64/night/113.png">
+            }
+        </div>
+            <input id="currentLocation" name="currentLocation" type="hidden" value="@Html.DisplayFor(model=> model.location.name), @Html.DisplayFor(model => model.location.country)">
+        <div class="col-xs-11 col-sm-11">
+                <h2 class="form-group">Current Weather for @Html.DisplayFor(model => model.location.name), @Html.DisplayFor(model => model.location.country)</h2>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        Local time @Html.DisplayFor(model => model.location.localtime)
+                    </div>
+                    <div class="col-sm-6">
+                        Last updated @Html.DisplayFor(model => model.current.last_updated)
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+}
+
+    
+<div class="container" style="margin-top: 40px">
+    <div class="row">
+        <!-- Col 1 -->
+        <div class="col-2 element-to-rotate">
+            Temp
+        </div>
+        <!-- Col 2 -->
+        <div class="col-1">
+            Feels like
+        </div>
+        <!-- Col 3 -->
+        <div class="col-1">
+            UV Index
+        </div>
+        <!-- Col 4 -->
+        <div class="col-1">
+            Humidity
+        </div>
+        <!-- Col 5 -->
+        <div class="col-1">
+            Cloud Coverage
+        </div>
+        <!-- Col 6 -->
+        <div class="col-1">
+            Wind Speed
+        </div>
+        <!-- Col 7 -->
+        <div class="col-1">
+            Wind Direction
+        </div>
+        <!-- Col 8 -->
+        <div class="col-1">
+            Wind Gust
+        </div>
+        <!-- Col 9 -->
+        <div class="col-1">
+            Pressure
+        </div>
+        <!-- Col 10 -->
+        <div class="col-1">
+            Precip
+        </div>
+    </div>
+    <div class="row">
+        <!-- Col 1 -->
+        <div class="col-2" id="tempC">
+            @Html.DisplayFor(model => model.current.temp_c) ºC
+        </div>
+        <!-- Col 2 -->
+        <div class="col-1">
+            @Html.DisplayFor(model => model.current.feelslike_c)
+        </div>
+        <!-- Col 3 -->
+        <div class="col-1">
+            @Html.DisplayFor(model => model.current.uv)
+        </div>
+        <!-- Col 4 -->
+        <div class="col-1">
+            @Html.DisplayFor(model => model.current.humidity)
+        </div>
+        <!-- Col 5 -->
+        <div class="col-1">
+            @Html.DisplayFor(model => model.current.cloud)
+        </div>
+        <!-- Col 6 -->
+        <div class="col-1" id="windSpeed">
+            @Html.DisplayFor(model => model.current.wind_kph) kph
+        </div>
+        <!-- Col 7 -->
+        <div class="col-1">
+            @Html.DisplayFor(model => model.current.wind_dir)
+        </div>
+        <!-- Col 8 -->
+        <div class="col-1" id="windGust">
+            @Html.DisplayFor(model => model.current.gust_kph) kph
+        </div>
+        <!-- Col 9 -->
+        <div class="col-1" id="pressure">
+            @Html.DisplayFor(model => model.current.pressure_mb) mb
+        </div>
+        <!-- Col 10 -->
+        <div class="col-1" id="precip">
+            @Html.DisplayFor(model => model.current.precip_mm) nm
+        </div>
+    </div>
+</div>
+
